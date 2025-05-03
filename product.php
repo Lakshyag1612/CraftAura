@@ -23,7 +23,7 @@ if ($conn->connect_error) {
 $product_id = $_GET['id'] ?? 0;
 $product_id = (int)$product_id;
 
-$product_query = $conn->query("SELECT * FROM products WHERE id = $product_id");
+$product_query = $conn->query("SELECT * FROM products WHERE id = $product_id AND special_offer = 1");
 $product = $product_query->fetch_assoc();
 
 if (!$product) {
@@ -50,10 +50,15 @@ $reviews_query = $conn->query("SELECT * FROM reviews WHERE product_id = $product
     <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="w-full h-[400px] object-cover rounded">
 
     <div>
+      
       <h1 class="text-3xl font-bold text-gray-800 mb-2"><?= htmlspecialchars($product['name']) ?></h1>
+      <div class="text-green-500 font-semibold">
+        <?php if ($product['special_offer'] == 1): ?>
+            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full">Special Offer</span>
+        <?php endif; ?>
+      </div> 
       <p class="text-xl text-purple-600 font-semibold mb-1">₹<?= number_format($product['price'], 2) ?></p>
       <p class="text-sm text-gray-600 mb-2"><?= htmlspecialchars($product['category']) ?></p>
-      <p class="text-gray-700 mb-6"><?= htmlspecialchars($product['description']) ?></p>
       <div class="mt-4 text-gray-700">
   <h3 class="text-lg font-semibold mb-2">Description</h3>
   <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
@@ -81,8 +86,9 @@ $reviews_query = $conn->query("SELECT * FROM reviews WHERE product_id = $product
   <button id="addToCartBtn" class="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600" data-id="<?= $product['id'] ?>">
   Add to Cart 🛒
 </button>
+<?php if ($_SESSION['role'] === 'admin'): ?>
 <a href="product_managment.php?id=<?= $product['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-
+<?php endif; ?>
 </div>
 
     </div>

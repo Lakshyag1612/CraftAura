@@ -17,6 +17,9 @@ $name = $_POST['name'];
 $price = $_POST['price'];
 $category = $_POST['category'];
 $description = $_POST['description'];
+$special_offer = isset($_POST['special_offer']) ? 1 : 0;
+
+
 $uploaded_by = $_SESSION['email']; // 👈 Important
 
 // Handle file upload
@@ -35,8 +38,8 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
 }
 
 // Insert into database
-$stmt = $conn->prepare("INSERT INTO products (name, price, category, description, image, uploaded_by) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sdssss", $name, $price, $category, $description, $target_file, $uploaded_by);
+$stmt = $conn->prepare("INSERT INTO products (name, price, category, description, image, uploaded_by, special_offer) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sdssssi", $name, $price, $category, $description, $target_file, $uploaded_by, $special_offer);
 
 if ($stmt->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Product added successfully!']);

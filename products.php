@@ -79,14 +79,14 @@ $result = $conn->query($query);
 <!-- Products Grid -->
 <div class="card-container">
     <?php while($row = $result->fetch_assoc()): ?>
-        <div class="card" onclick="window.location='product.php?id=<?= $row['id'] ?>'">
+        <a href="product.php?id=<?= $row['id'] ?>" class="card" style="text-decoration: none; color: inherit;">
             <img src="<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
             <h3><?= htmlspecialchars($row['name']) ?></h3>
             <p>€<?= number_format($row['price'], 2) ?></p>
             <p><?= htmlspecialchars($row['category']) ?></p>
             <p class="text-gray-600 text-sm mt-2"><?= htmlspecialchars($row['description']) ?></p>
 
-        </div>
+    </a>
     <?php endwhile; ?>
 </div>
 

@@ -31,9 +31,7 @@ if(!isset($_SESSION['email'])){
 
 <?php include 'products.php'; ?>
   
-
-<?php include 'add_product.php'; ?>
-  
+<?php include 'feedback.php'; ?>
   <script>
   window.addEventListener('scroll', function () {
     const scrolled = window.scrollY;

@@ -12,11 +12,21 @@ if ($conn->connect_error) {
 }
 
 // --- Get category from URL ---
+$special = isset($_GET['special']) ? (int)$_GET['special'] : 0;
 $category = $_GET['category'] ?? '';
-if (empty($category)) {
-    echo "<h2 class='text-center text-red-500 mt-10'>No category specified.</h2>";
+
+if ($special) {
+    $where_clause = "WHERE special_offer = 1";
+    $page_title = "Special Offers";
+} elseif (!empty($category)) {
+    $escaped_category = $conn->real_escape_string($category);
+    $where_clause = "WHERE category = '$escaped_category'";
+    $page_title = htmlspecialchars($category) . " Collection";
+} else {
+    echo "<h2 class='text-center text-red-500 mt-10'>No category or special offer specified.</h2>";
     exit();
 }
+
 
 // --- Pagination ---
 $limit = 6;
@@ -56,7 +66,7 @@ $result = $conn->query($query);
 </head>
 <body class="bg-gray-50">
   <div class="max-w-7xl mx-auto py-10 px-4">
-    <h1 class="text-4xl font-bold text-center mb-6 text-gray-800"><?= htmlspecialchars($category) ?> Collection</h1>
+  <h1 class="text-4xl font-bold text-center mb-6 text-gray-800"><?= $page_title ?></h1>
 
     <!-- Sort Dropdown -->
     <form method="GET" class="text-center mb-6">

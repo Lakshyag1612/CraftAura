@@ -43,24 +43,34 @@ if (!isset($_SESSION['cart'])) {
             <!-- Right Side -->
             <div class="flex items-center space-x-4">
                 <!-- Account Dropdown -->
-                <div class="relative group hidden md:block">
-                    <div class="relative inline-block text-left">
-                        <button id="accountBtn" class="flex items-center text-sm font-medium px-4 py-2 focus:outline-none">
-                            👤 Hi <?= $_SESSION['name']; ?>
-                        </button>
+          <!-- Account Dropdown -->
+<div class="relative group hidden md:block">
+    <div class="relative inline-block text-left">
+        <button id="accountBtn" class="flex items-center text-sm font-medium px-4 py-2 focus:outline-none">
+            👤 Hi <?= $_SESSION['name']; ?>
+        </button>
 
-                        <div class="accountDropdown hidden absolute right-0 bg-white border rounded shadow-md mt-2 w-44 z-50">
-                            <button onclick="contact_us.php" class="block no-underline px-4 py-2 w-full hover:bg-gray-100">Contact us</button>
-                            <button onclick="profile.php" class="block no-underline  px-4 py-2 w-full hover:bg-gray-100">My Profile</button>
-                            <div id="wishlistCount" class="text-sm hidden w-full md:block">
-                                <button class="w-full ">
-                                    ❤️ Wishlist <?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?> item<?= (isset($_SESSION['wishlist']) && count($_SESSION['wishlist']) !== 1) ? 's' : '' ?>
-                                </button>
-                            </div>
-                            <button onclick="window.location.href='logout.php'" class="block px-4 py-2 w-full hover:bg-gray-100">Logout</button>
-                        </div>
-                    </div>
+        <div class="accountDropdown hidden absolute right-0 bg-white border rounded shadow-md mt-2 w-48 z-50">
+            <?php if ($_SESSION['role'] === 'admin'): ?>
+                <button onclick="window.location.href='profile.php'" class="block no-underline px-4 py-2 w-full hover:bg-gray-100">My Profile</button>
+                <button onclick="window.location.href='add_product.php'" class="block no-underline px-4 py-2 w-full hover:bg-gray-100">➕ Add Product</button>
+            <?php else: ?>
+                <button onclick="window.location.href='user_profile.php'" class="block no-underline px-4 py-2 w-full hover:bg-gray-100">My Profile</button>
+                <button onclick="window.location.href='contact_us.php'" class="block no-underline px-4 py-2 w-full hover:bg-gray-100">Contact Us</button>
+
+                <!-- Wishlist -->
+                <div id="wishlistCount" class="text-sm hidden w-full md:block">
+                    <button class="w-full px-4 py-2 text-left hover:bg-gray-100">
+                        ❤️ Wishlist <?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?> item<?= (isset($_SESSION['wishlist']) && count($_SESSION['wishlist']) !== 1) ? 's' : '' ?>
+                    </button>
                 </div>
+            <?php endif; ?>
+
+            <!-- Logout -->
+            <button onclick="window.location.href='logout.php'" class="block px-4 py-2 w-full hover:bg-gray-100">Logout</button>
+        </div>
+    </div>
+</div>
 
                 <!-- Cart -->
                 <?php
@@ -80,12 +90,18 @@ $cart_count = isset($_SESSION['cart'])
 
         <!-- Navigation Links -->
         <div class="flex hidden md:flex items-center justify-center space-x-8 text-sm font-semibold text-gray-800 border-t border-gray-300 h-12 text">
-            <a href="user_page.php" class="no-underline">Home</a>
-            <a href="particular_product.php?category=Pottery" class="no-underline">Pottery</a>
+         
+        <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a href="admin_page.php" class="no-underline">Home</a>
+        <?php else: ?>
+        <a href="user_page.php" class="no-underline">Home</a>
+        <?php endif; ?>   
+        <a href="particular_product.php?category=Pottery" class="no-underline">Pottery</a>
             <a href="particular_product.php?category=Statues" class="no-underline">Statues</a>
             <a href="particular_product.php?category=Painting" class="no-underline">Painting</a>
             <a href="particular_product.php?category=Home Decor" class="no-underline">Home Decor</a>
-            <a href="particular_product.php?category=Special Offers" class="no-underline text-blue-500">SPECIAL OFFERS</a>
+            <a href="particular_product.php?special=1" class="text-yellow-600 hover:underline">View Special Offers</a>
+    
         </div>
 
         <!-- Mobile Menu -->
