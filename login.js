@@ -1,21 +1,19 @@
-function showForm(formId) {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-
-    if (formId === 'login-form') {
-        registerForm.classList.remove('active');
-        loginForm.classList.add('active');
+function toggleForm(formType) {
+    const container = document.querySelector('.main-container');
+    if (formType === 'register') {
+        container.classList.add('show-register');
     } else {
-        loginForm.classList.remove('active');
-        registerForm.classList.add('active');
+        container.classList.remove('show-register');
     }
 }
+function showForm(formId) {
+    document.getElementById('login-form').classList.remove('active');
+    document.getElementById('register-form').classList.remove('active');
+    document.getElementById(formId).classList.add('active');
+}
 
+// Optional: trigger based on PHP session
 document.addEventListener('DOMContentLoaded', function() {
-    const activeForm = '<?= $activeForm; ?>';  // PHP variable injected here
-    if (activeForm === 'login') {
-        showForm('login-form');
-    } else {
-        showForm('register-form');
-    }
+    const isRegister = '<?= $activeForm; ?>' === 'register';
+    toggleForm(isRegister ? 'register' : 'login');
 });

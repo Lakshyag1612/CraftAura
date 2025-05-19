@@ -4,7 +4,6 @@ $conn = new mysqli("localhost", "root", "Lakshya@16", "users_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
@@ -48,12 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $update->execute();
     
     ob_start();
-    header("Location: product.php?category=" . urlencode($category) . "&saved=1");
+    header("Location: product.php?id=" . $product_id);    
     ob_end_flush();
     exit();
     
     exit();
 }
+include 'header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="max-w-2xl mx-auto bg-white p-8 rounded shadow">
     <h1 class="text-2xl font-bold mb-6 text-center">Edit Product</h1>
-    
+    <?php if (isset($_GET['updated'])): ?>
+  <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+    Product updated successfully!
+  </div>
+<?php endif; ?>
+
     <form method="POST" enctype="multipart/form-data">
       <div class="mb-4">
         <label class="block text-gray-700">Product Name</label>

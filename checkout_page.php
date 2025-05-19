@@ -71,7 +71,7 @@ $user_signed_in = isset($_SESSION['user_id']); // Assuming user_id exists in the
             <h2 class="text-2xl font-bold mb-4">Your Information</h2>
             <div class="bg-white p-6 rounded-lg shadow-lg">
 
-                <form action="submit_order.php" method="POST" id="order_form">
+                <form action="final_order.php" method="POST" id="order_form">
 
                     <!-- Delivery Information -->
                     <div class="mb-4">
@@ -93,24 +93,10 @@ $user_signed_in = isset($_SESSION['user_id']); // Assuming user_id exists in the
                         </div>
                     </div>
 
-                    <!-- Payment Information -->
-                    <div class="mb-4">
-                        <h3 class="font-semibold">Payment Information</h3>
-
-                        <label for="card_number" class="block text-sm mt-4">Card Number</label>
-                        <input type="text" name="card_number" id="card_number" class="w-full px-4 py-2 border border-gray-300 rounded" required maxlength="16" pattern="\d{16}" title="Please enter a valid 16-digit card number">
-
-                        <label for="expiry_date" class="block text-sm mt-4">Expiry Date</label>
-                        <input type="text" name="expiry_date" id="expiry_date" class="w-full px-4 py-2 border border-gray-300 rounded" required placeholder="MM/YY" pattern="\d{2}/\d{2}" title="Please enter a valid expiry date (MM/YY)">
-
-                        <label for="cvv" class="block text-sm mt-4">CVV</label>
-                        <input type="text" name="cvv" id="cvv" class="w-full px-4 py-2 border border-gray-300 rounded" required maxlength="3" pattern="\d{3}" title="Please enter a valid 3-digit CVV">
-                    </div>
-
                     <!-- Submit Buttons -->
                     <div class="mt-6 flex justify-between">
                         <button type="button" class="px-6 py-2 bg-gray-300 text-black rounded hover:bg-gray-400" onclick="window.location.href='cart.php'">Adjust Cart</button>
-                        <button type="submit" class="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">Complete Order</button>
+                        <button type="submit" class="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600" >Complete Order</button>
                     </div>
                 </form>
             </div>
@@ -126,18 +112,7 @@ $user_signed_in = isset($_SESSION['user_id']); // Assuming user_id exists in the
         const expiryDate = document.getElementById('expiry_date').value;
         const cvv = document.getElementById('cvv').value;
         
-        // Validate card number, expiry date, and CVV
-        if (!/^\d{16}$/.test(cardNumber)) {
-            alert("Please enter a valid 16-digit card number.");
-            e.preventDefault();
-        } else if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
-            alert("Please enter a valid expiry date (MM/YY).");
-            e.preventDefault();
-        } else if (!/^\d{3}$/.test(cvv)) {
-            alert("Please enter a valid 3-digit CVV.");
-            e.preventDefault();
-        }
-    });
+          });
 </script>
 
 </body>
