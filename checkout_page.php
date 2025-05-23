@@ -5,8 +5,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-include 'header.php';
-
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    include 'header_admin.php';
+  } else {
+    include 'header.php';
+  }
 // Check if the user is signed in
 $user_signed_in = isset($_SESSION['user_id']); // Assuming user_id exists in the session when signed in
 ?>

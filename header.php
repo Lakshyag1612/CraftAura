@@ -26,7 +26,8 @@ if (!isset($_SESSION['cart'])) {
 
 <body class="bg-gray-100">
     <!-- navbar.php -->
-    <nav class="sticky top-0 bg-[#e6e1f4] shadow-md z-50">
+    <nav id="mainNavbar" class="sticky top-0 bg-[#e6e1f4] shadow-md z-50 transition-transform duration-300">
+
         <!-- Top Navbar -->
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 py-3">
             <!-- Logo -->
@@ -100,8 +101,10 @@ $cart_count = isset($_SESSION['cart'])
             <a href="particular_product.php?category=Statues" class="no-underline">Statues</a>
             <a href="particular_product.php?category=Painting" class="no-underline">Painting</a>
             <a href="particular_product.php?category=Home Decor" class="no-underline">Home Decor</a>
-            <a href="particular_product.php?special=1" class="text-yellow-600 hover:underline">View Special Offers</a>
-    
+            <li>
+  <a href="special_offers.php" class="hover:text-yellow-500 font-semibold no-underline">Special Offers</a>
+</li>
+
         </div>
 
         <!-- Mobile Menu -->
@@ -157,6 +160,23 @@ $cart_count = isset($_SESSION['cart'])
                 dropdown.classList.add('hidden');
             }
         });
+    let lastScrollTop = 0;
+    const navbar = document.getElementById('mainNavbar');
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > lastScrollTop) {
+            // Scrolling down
+            navbar.style.transform = 'translateY(-100%)';
+        } else {
+            // Scrolling up
+            navbar.style.transform = 'translateY(0)';
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For mobile or negative scroll
+    });
+
     </script>
 
 </body>

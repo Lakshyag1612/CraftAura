@@ -4,7 +4,7 @@ if(!isset($_SESSION['email'])){
     header('Location: login.php');
     exit();
   }
-  include 'header.php';
+  include 'header_admin.php';
 ?>
 
 

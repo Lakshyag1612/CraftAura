@@ -15,7 +15,12 @@ $_SESSION['order_info'] = [
     'email' => $email,
     'address' => $address
 ];
-include 'header.php';
+
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    include 'header_admin.php';
+  } else {
+    include 'header.php';
+  }
 // Fetch cart and calculate total
 $total_price = 0;
 $items = [];

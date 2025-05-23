@@ -12,8 +12,12 @@ if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
 }
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+  include 'header_admin.php';
+} else {
+  include 'header.php';
+}
 
-include 'header.php';
 $conn = new mysqli("localhost", "root", "Lakshya@16", "users_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -31,6 +35,9 @@ if (!$product) {
     exit();
 }
 
+if ($product['discount'] > 0) {
+  echo "<span class='bg-red-500 text-white text-xs px-2 py-1 rounded'>SALE</span>";
+}
 // Get reviews
 $reviews_query = $conn->query("SELECT * FROM reviews WHERE product_id = $product_id ORDER BY created_at DESC");
 ?>
@@ -85,10 +92,10 @@ $reviews_query = $conn->query("SELECT * FROM reviews WHERE product_id = $product
   <button id="wishlistBtn" class="px-6 py-2 bg-pink-400 text-white rounded hover:bg-pink-500">❤️ Add to Wishlist</button>
   <button id="addToCartBtn" class="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600" data-id="<?= $product['id'] ?>">
   Add to Cart 🛒
-</button>
-<?php if ($_SESSION['role'] === 'admin'): ?>
-<a href="product_managment.php?id=<?= $product['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+</button><?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+    <a href="product_managment.php?id=<?= $product['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
 <?php endif; ?>
+
 </div>
 
     </div>
@@ -231,144 +238,3 @@ document.addEventListener("DOMContentLoaded", function () {
 </body>
 </html>
 
-
-
-
-
-<?php
-session_start();
-if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
-if (!isset($_SESSION['wishlist'])) $_SESSION['wishlist'] = [];
-if (!isset($_SESSION['email'])) {
-    header('Location: login.php');
-    exit();
-}
-
-include 'header.php';
-
-$conn = new mysqli("localhost", "root", "Lakshya@16", "users_db");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$product_id = (int) ($_GET['id'] ?? 0);
-$product_query = $conn->query("SELECT * FROM products WHERE id = $product_id");
-$product = $product_query->fetch_assoc();
-
-if (!$product) {
-    echo "<h2 class='text-center text-red-500 mt-10'>Product not found.</h2>";
-    exit();
-}
-
-$reviews_query = $conn->query("SELECT * FROM reviews WHERE product_id = $product_id ORDER BY created_at DESC");
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title><?= htmlspecialchars($product['name']) ?> - Craftaura</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-purple-100">
-<div class="max-w-7xl mx-auto py-10 px-6">
-
-  <!-- Product Section -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-8 rounded-lg shadow-lg">
-    <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="w-full h-[400px] object-cover rounded">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-800 mb-2"><?= htmlspecialchars($product['name']) ?></h1>
-      <?php if ($product['special_offer'] == 1): ?>
-        <div class="text-green-500 font-semibold mb-2">
-          <span class="bg-yellow-500 text-white px-3 py-1 rounded-full">Special Offer</span>
-        </div>
-      <?php endif; ?>
-      <p class="text-xl text-purple-600 font-semibold mb-1">₹<?= number_format($product['price'], 2) ?></p>
-      <p class="text-sm text-gray-600 mb-2"><?= htmlspecialchars($product['category']) ?></p>
-      <div class="mt-4 text-gray-700">
-        <h3 class="text-lg font-semibold mb-2">Description</h3>
-        <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
-      </div>
-      <div class="mb-4 mt-4">
-        <label class="block text-gray-700 mb-2">Frame Size:</label>
-        <select class="border px-3 py-2 rounded w-full">
-          <option>22.86 x 22.86cm | 9x9</option>
-          <option>30 x 30cm | 12x12</option>
-          <option>40 x 40cm | 16x16</option>
-        </select>
-      </div>
-      <div class="flex items-center mb-6">
-        <label class="text-gray-700 mr-3">Quantity:</label>
-        <input type="number" value="1" min="1" class="border w-20 px-2 py-1 rounded">
-      </div>
-      <div class="flex space-x-4">
-        <button id="wishlistBtn" class="px-6 py-2 bg-pink-400 text-white rounded hover:bg-pink-500">❤️ Add to Wishlist</button>
-        <button id="addToCartBtn" class="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600" data-id="<?= $product['id'] ?>">Add to Cart 🛒</button>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
-          <a href="product_managment.php?id=<?= $product['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-        <?php endif; ?>
-      </div>
-    </div>
-  </div>
-
-  <!-- Reviews -->
-  <div class="bg-white p-8 rounded-lg shadow-lg mt-10">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Reviews:</h2>
-    <?php if ($reviews_query->num_rows > 0): ?>
-      <?php while ($review = $reviews_query->fetch_assoc()): ?>
-        <div class="border-b border-gray-200 pb-4 mb-4">
-          <p class="font-semibold">
-            <?= htmlspecialchars($review['user_name']) ?> 
-            <span class="text-sm text-gray-500"><?= date('d M Y', strtotime($review['created_at'])) ?></span>
-            <span class="text-yellow-400 ml-2">⭐ <?= $review['rating'] ?></span>
-            <?php if ($_SESSION['role'] === 'admin'): ?>
-              <button onclick="confirmDelete(<?= $review['id'] ?>)" class="ml-4 text-red-500 hover:underline">Delete</button>
-            <?php endif; ?>
-          </p>
-          <p class="text-gray-700 mt-1"><?= htmlspecialchars($review['comment']) ?></p>
-        </div>
-      <?php endwhile; ?>
-    <?php else: ?>
-      <p class="text-gray-500">No reviews yet.</p>
-    <?php endif; ?>
-  </div>
-
-  <!-- Leave a Review -->
-  <div class="bg-white p-8 rounded-lg shadow-lg mt-10">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Leave a Review:</h2>
-    <form method="POST" action="add_review.php" class="space-y-4">
-      <input type="hidden" name="product_id" value="<?= $product_id ?>">
-      <div>
-        <label class="block text-gray-700 mb-2">Stars:</label>
-        <select name="rating" class="border px-3 py-2 rounded w-full">
-          <option value="5">⭐ 5 - Excellent</option>
-          <option value="4">⭐ 4 - Good</option>
-          <option value="3">⭐ 3 - Average</option>
-          <option value="2">⭐ 2 - Poor</option>
-          <option value="1">⭐ 1 - Terrible</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-gray-700 mb-2">Review:</label>
-        <textarea name="comment" rows="4" class="border px-3 py-2 rounded w-full" placeholder="Write your review..."></textarea>
-      </div>
-      <button type="submit" class="bg-purple-500 text-white px-6 py-2 rounded hover:bg-purple-600">Add Review</button>
-    </form>
-  </div>
-
-</div>
-
-<script>
-function confirmDelete(reviewId) {
-  if (confirm("Are you sure you want to delete this review?")) {
-    window.location.href = "delete_review.php?id=" + reviewId + "&product_id=<?= $product_id ?>";
-  }
-}
-</script>
-
-<!-- Wishlist & Cart Script -->
-<script>
-// wishlist & cart logic (your existing script, no changes needed)
-</script>
-</body>
-</html>

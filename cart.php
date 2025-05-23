@@ -7,8 +7,11 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     exit();
 }
 
-include 'header.php';
-
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    include 'header_admin.php';
+  } else {
+    include 'header.php';
+  }
 // Connect to the database
 $conn = new mysqli("localhost", "root", "Lakshya@16", "users_db");
 if ($conn->connect_error) {

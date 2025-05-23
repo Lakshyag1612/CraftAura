@@ -11,12 +11,15 @@ $offset = ($page - 1) * $limit;
 
 // --- Sorting ---
 $sort_options = [
-    'price_asc' => 'price ASC',
-    'price_desc' => 'price DESC',
+    'price_asc' => '(price - (price * discount / 100)) ASC',
+    'price_desc' => '(price - (price * discount / 100)) DESC',
+    'discount_asc' => 'discount ASC',
+    'discount_desc' => 'discount DESC',
     'name_asc' => 'name ASC',
     'name_desc' => 'name DESC',
     'rating_desc' => 'rating DESC'
 ];
+
 
 $sort = $_GET['sort'] ?? 'name_asc';
 $order_by = $sort_options[$sort] ?? 'name ASC';
@@ -41,6 +44,8 @@ $total_pages = ceil($total_products / $limit);
 // Fetch products with sorting, pagination, and category filter
 $query = "SELECT * FROM products $where_clause ORDER BY $order_by LIMIT $limit OFFSET $offset";
 $result = $conn->query($query);
+// Example: Fetching all products
+$products = mysqli_query($conn, "SELECT * FROM products");
 
 ?>
 
@@ -78,17 +83,40 @@ $result = $conn->query($query);
 
 <!-- Products Grid -->
 <div class="card-container">
-    <?php while($row = $result->fetch_assoc()): ?>
+    <?php while ($row = $result->fetch_assoc()): ?>
+        <?php
+            $originalPrice = $row['price'];
+            $discount = $row['discount'];
+            $finalPrice = $originalPrice;
+
+            if ($discount > 0) {
+                $finalPrice = $originalPrice - ($originalPrice * $discount / 100);
+            }
+        ?>
         <a href="product.php?id=<?= $row['id'] ?>" class="card" style="text-decoration: none; color: inherit;">
             <img src="<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
             <h3><?= htmlspecialchars($row['name']) ?></h3>
-            <p>€<?= number_format($row['price'], 2) ?></p>
+
+            <?php if ($discount > 0): ?>
+                <p style="color: red; font-weight: bold;">
+                    €<?= number_format($finalPrice, 2) ?>
+                    <span style="text-decoration: line-through; color: gray; font-size: 0.9em;">
+                        €<?= number_format($originalPrice, 2) ?>
+                    </span>
+                    <span style="background-color: #ffe4e6; color: #dc2626; font-size: 0.8em; padding: 2px 5px; border-radius: 5px;">
+                        <?= $discount ?>% OFF
+                    </span>
+                </p>
+            <?php else: ?>
+                <p>€<?= number_format($originalPrice, 2) ?></p>
+            <?php endif; ?>
+
             <p><?= htmlspecialchars($row['category']) ?></p>
             <p class="text-gray-600 text-sm mt-2"><?= htmlspecialchars($row['description']) ?></p>
-
-    </a>
+        </a>
     <?php endwhile; ?>
 </div>
+
 
 <!-- Pagination -->
 <div class="pagination" style="text-align:center; margin-top: 20px;">

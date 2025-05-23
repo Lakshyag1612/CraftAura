@@ -10,7 +10,11 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role'])) {
     header("Location: login.php");
     exit();
 }
-include 'header.php';
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    include 'header_admin.php';
+  } else {
+    include 'header.php';
+  }
 
 $email = $_SESSION['email'];
 $name = $_SESSION['name'];

@@ -1,5 +1,10 @@
 <?php
-include 'header.php';
+
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+  include 'header_admin.php';
+} else {
+  include 'header.php';
+}
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 

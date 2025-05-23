@@ -1,5 +1,9 @@
 <?php
-include 'header.php';
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+  include 'header_admin.php';
+} else {
+  include 'header.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +32,10 @@ include 'header.php';
         </div>
         <div>
           <label class="block mb-1 text-sm font-semibold text-gray-700">Category</label>
+          <label for="discount">Discount (%)</label>
+          <input type="number" name="discount" id="discount" min="0" max="100" step="0.01" required>
+
+          
           <select name="category" required class="input-field">
             <option value="">Select Category</option>
             <option value="Pottery">Pottery</option>

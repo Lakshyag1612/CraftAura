@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desc = $_POST['description'];
     $price = $_POST['price'];
     $category = $_POST['category'];
+    $discount = $_POST['discount'];
 
     // Handle image
     if ($_FILES['image']['name']) {
@@ -42,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_file = $product['image'];
     }
 
-    $update = $conn->prepare("UPDATE products SET name=?, price=?, category=?, description=?, image=? WHERE id=?");
-    $update->bind_param("sdsssi", $name, $price, $category, $desc, $target_file, $product_id);
-    $update->execute();
+    $update = $conn->prepare("UPDATE products SET name=?, price=?, category=?, description=?, image=?, discount=? WHERE id=?");
+    $update->bind_param("sdsssdi", $name, $price, $category, $desc, $target_file, $discount, $product_id);
+     $update->execute();
     
     ob_start();
     header("Location: product.php?id=" . $product_id);    
@@ -53,7 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     exit();
 }
-include 'header.php';
+
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+  include 'header_admin.php';
+} else {
+  include 'header.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,12 +106,18 @@ include 'header.php';
         <label class="block text-gray-700">Price (Rs)</label>
         <input type="number" step="0.01" name="price" value="<?= $product['price'] ?>" class="w-full p-2 border border-gray-300 rounded" required>
       </div>
-
+  
       <div class="mb-4">
         <label class="block text-gray-700">Product Image</label>
         <input type="file" name="image" class="w-full">
         <img src="<?= $product['image'] ?>" alt="Current Image" class="mt-2 h-32">
       </div>
+
+
+      <div class="mb-4">
+  <label class="block text-gray-700">Discount (%)</label>
+  <input type="number" step="0.01" name="discount" value="<?= isset($product['discount']) ? $product['discount'] : 0 ?>" class="w-full p-2 border border-gray-300 rounded" required>
+</div>
 
       <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded">
         Save Changes
